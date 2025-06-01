@@ -40,21 +40,34 @@ export const createBlog = async (req, res) => {
 
 export const editBlog = async (req, res) => {
     const { title, content } = req.body;
-    let imageUrl = req.body.image;
-
-    if (req.file) {
+    let imageUrl = req.body.imageUrl || null;
+    console.log("File received:", req.file)
+    try {
+      if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path);
         fs.unlinkSync(req.file.path);
-        imageUrl = result.secure_url;
+        imageUrl = result.secure_url;     
+      }
+  
+      if (imageUrl) {
+        await pool.query(
+          'UPDATE blogs SET title = ?, content = ?, image = ? WHERE id = ?',
+          [title, content, imageUrl, req.params.id]
+        );
+      } else {
+        await pool.query(
+          'UPDATE blogs SET title = ?, content = ? WHERE id = ?',
+          [title, content, req.params.id]
+        );
+      }
+  
+      res.sendStatus(200);
+    } catch (error) {
+      console.log("Error in Edit Blog:", error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    await pool.query(
-        'UPDATE blogs SET title = ?, content = ?, image = ? WHERE id = ?',
-        [title, content, imageUrl, req.params.id]
-    );
-
-    res.sendStatus(200);
-}
+  };
+  
 
 export const deleteBlog = async (req, res) => {
     await pool.query('DELETE FROM blogs WHERE id = ?', [req.params.id]);
