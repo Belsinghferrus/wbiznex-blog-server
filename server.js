@@ -47,6 +47,16 @@ cloudinary.config({
 app.use('/api/user', authRoute)
 app.use('/api/blog', blogRoute)
 
+//health
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ message: 'Server is running' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
