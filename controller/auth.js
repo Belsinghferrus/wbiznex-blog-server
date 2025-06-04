@@ -25,7 +25,7 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
     const token = jwt.sign({ email: admin.email }, process.env.JWT_SECRET);
-    res.cookie('token', token, { domain:"blog.wbiznex.com", httpOnly: true, secure: true, sameSite: 'None' });
+    res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'None' });
     return res.status(200).json({  message: 'Login successful', email, token });
   } catch (error) {
     console.error("Error in Login:", error);

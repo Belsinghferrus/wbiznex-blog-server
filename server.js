@@ -39,8 +39,6 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET,
   });
 
-
-
 //Routes
 app.use('/api/user', authRoute)
 app.use('/api/blog', blogRoute)
