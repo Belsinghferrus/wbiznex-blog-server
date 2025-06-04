@@ -70,6 +70,13 @@ export const editBlog = async (req, res) => {
   
 
 export const deleteBlog = async (req, res) => {
+  try {
     await pool.query('DELETE FROM blogs WHERE id = ?', [req.params.id]);
     res.sendStatus(204);
+  } catch (error) {
+    console.error("Error in Delete Blog:", error);
+    return res.status(500).json({ error: 'Internal server error' });
+    
+  }
+   
 }

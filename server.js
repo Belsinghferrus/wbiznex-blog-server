@@ -2,11 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import mysql from 'mysql2/promise';
 import authRoute from './router/authRoutes.js';
 import blogRoute from './router/blogRoutes.js';
 import cloudinary from 'cloudinary';
-import multer from 'multer';
 import pool from './config/db.js';
 
 

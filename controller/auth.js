@@ -18,15 +18,20 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  const [rows] = await pool.query('SELECT * FROM admins WHERE email = ?', [email]);
-  if (rows.length === 0) return res.status(401).json({ message: 'Invalid credentials' });
-  const admin = rows[0];
-  const isMatch = await bcrypt.compare(password, admin.password);
-  if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+  try {
+    const [rows] = await pool.query('SELECT * FROM admins WHERE email = ?', [email]);
+    if (rows.length === 0) return res.status(401).json({ message: 'Invalid credentials' });
+    const admin = rows[0];
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+    const token = jwt.sign({ email: admin.email }, process.env.JWT_SECRET);
+    res.cookie('token', token, { domain:"blog.wbiznex.com", httpOnly: true, sameSite: 'Strict' });
+    return res.status(200).json({  message: 'Login successful', email, token });
+  } catch (error) {
+    console.error("Error in Login:", error);
+    res.status(500).json({ error: 'Login failed' });
+  }
 
-  const token = jwt.sign({ email: admin.email }, process.env.JWT_SECRET);
-  res.cookie('token', token, { httpOnly: true, sameSite: 'Strict' });
-  return res.status(200).json({ message: 'Login successful', email, token });
 }
 
 export const logout = (req, res) => {
