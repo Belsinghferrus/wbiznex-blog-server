@@ -30,7 +30,11 @@ export const login = async(req, res) => {
     res.sendStatus(200);
 }
 
-export const logout = () => {
+export const logout = (req, res) => {
     res.clearCookie('token');
     res.sendStatus(200);
+}
+
+export const checkAuth = (req, res) => {
+  res.status(200).json({ authenticated: true, user: req.user });
 }
