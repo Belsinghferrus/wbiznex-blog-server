@@ -26,8 +26,8 @@ export const login = async(req, res) => {
   
     const token = jwt.sign({ email: admin.email }, process.env.JWT_SECRET);
     res.cookie('token', token, { httpOnly: true, sameSite: 'Strict' });
-    res.json({ message: 'Login successful', email, token });
-    res.sendStatus(200);
+    return res.json({ message: 'Login successful', email, token });
+
 }
 
 export const logout = (req, res) => {
